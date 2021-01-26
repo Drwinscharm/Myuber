@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -49,6 +50,9 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
     private SupportMapFragment mMapFragment;
 
     private String rideId, currentUserId, customerId, driverId, userDriverOrCustomer;
+    private String distance;
+
+    private Double ridePrice;
 
     private DatabaseReference historyRideInfoDb;
 
@@ -96,6 +100,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     private void getRideInformation() {
         historyRideInfoDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
@@ -121,6 +126,12 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                             mRatingBar.setRating(Integer.valueOf(child.getValue().toString()));
 
                         }
+                        if (child.getKey().equals("distance")){
+                            distance = child.getValue().toString();
+                            distanceRide.setText(distance.substring(0, Math.min(distance.length(), 5)) +"Km");
+                            ridePrice = Double.valueOf(distance) * 0.5;
+                        }
+
                         if (child.getKey().equals("timestamp")){
                             dateRide.setText(getDate(Long.valueOf(child.getValue().toString())));
 
